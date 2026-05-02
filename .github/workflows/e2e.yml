@@ -51,7 +51,7 @@ jobs:
         run: npm ci
 
       - name: Install app dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
         working-directory: app/budgetpilot
 
       - name: Cache Playwright browsers
@@ -123,7 +123,7 @@ jobs:
         run: npm ci
 
       - name: Install app dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
         working-directory: app/budgetpilot
 
       - name: Cache Playwright Chromium

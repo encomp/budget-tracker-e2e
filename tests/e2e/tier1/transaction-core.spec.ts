@@ -72,7 +72,7 @@ test.describe('Transaction Core Loop @tier1', () => {
     })
     await transactionForm.submitAndWaitForClose()
 
-    await expect(page.getByTestId('metric-income')).toContainText('3500')
+    await expect(page.getByTestId('metric-income')).toContainText('3,500')
   })
 
   test('IndexedDB persists transactions across hard reload', async ({ page }) => {

@@ -1,5 +1,5 @@
 import { test, expect, CURRENT_MONTH, setupOnboarded } from '../fixtures'
-import { seedTransactions, getCategoryId } from '../helpers/db'
+import { seedTransactions, getCategoryId, seedOnboardedState } from '../helpers/db'
 import path from 'path'
 import os from 'os'
 import fs from 'fs'
@@ -45,8 +45,8 @@ test.describe('Data Safety @tier1', () => {
     })
     expect(countAfterClear).toBe(0)
 
-    await page.goto('/')
-    await page.waitForLoadState('networkidle')
+    // App shows onboarding after clear — seed state to bypass it
+    await seedOnboardedState(page)
     await page.getByTestId('nav-export-import').click()
     await page.setInputFiles(
       '[data-testid="restore-file-input"]',

@@ -84,6 +84,9 @@ test.describe('Theme Gallery @tier1', () => {
     // Rose is now active — remove it
     await themeGallery.removeThemeFromGallery('test-rose')
 
+    // Wait for the async handleRemoveTheme to complete (DB write + theme revert)
+    await expect(page.getByTestId('theme-card-active-midnight')).toBeVisible({ timeout: 5000 })
+
     // Reverts to Midnight
     expect(await themeGallery.getCurrentAccent()).toBe('#14b8a6')
     expect(await themeGallery.isThemeActive('midnight')).toBe(true)

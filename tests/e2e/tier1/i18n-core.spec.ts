@@ -89,6 +89,8 @@ test.describe('i18n Core @tier1', () => {
     // Set currency to € via the profile form
     await page.getByTestId('settings-profile-currency').fill('€')
     await page.getByTestId('settings-profile-save').click()
+    // Wait for the DB write to complete (success toast confirms it)
+    await page.getByTestId('toast-container').waitFor({ state: 'visible' })
 
     // Switch language to French
     await page.getByTestId('settings-language-select').click()

@@ -58,6 +58,15 @@ export async function resetDB(page: Page): Promise<void> {
     })
   })
   await page.reload({ waitUntil: 'networkidle' })
+  // Reset Zustand store's installedThemes so parallel tests don't bleed
+  // installed theme state from a previous test into the next one.
+  // After page reload, boot() sets installedThemes from DB (now empty),
+  // but we also reset here as belt-and-suspenders.
+  await page.evaluate(async () => {
+    // @ts-ignore — browser-context dynamic import resolved at runtime by Vite
+    const { useAppStore } = await import('/src/store/useAppStore.ts')
+    useAppStore.getState().setInstalledThemes([])
+  })
 }
 
 export async function seedOnboardedState(

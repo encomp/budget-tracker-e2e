@@ -93,6 +93,8 @@ export class ImportPage {
 
   async setRuleKeyForRow(rowIndex: number, key: string): Promise<void> {
     const input = this.page.getByTestId(`import-rule-key-${rowIndex}`)
+    await input.click()  // unlock editing (triggers onClick in app that sets ruleKeyOverrides)
+    await this.page.waitForTimeout(100)  // allow React state update
     await input.fill(key)
     await input.press('Tab')
   }

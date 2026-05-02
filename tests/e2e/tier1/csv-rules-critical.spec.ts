@@ -127,14 +127,18 @@ test.describe('CSV Rules Critical @tier1', () => {
 
     await importPage.importButton.click()
 
+    // Wait for the async handleImport() to complete — the app navigates to
+    // transactions view (showing the transactions table) after a successful import
+    await page.getByTestId('transactions-table').waitFor({ state: 'visible', timeout: 15000 })
+
     const ruleCount = await page.evaluate(async () => {
       // @ts-ignore
       const { db } = await import('/src/lib/db.ts')
-      try {
-        return await (db as any).importRules?.count() ?? 0
-      } catch {
-        return await db.csvCategoryMap.count()
+      // importRules table doesn't exist in this app; use csvCategoryMap
+      if ((db as any).importRules) {
+        try { return await (db as any).importRules.count() } catch { /* fall through */ }
       }
+      return await db.csvCategoryMap.count()
     })
     expect(ruleCount).toBeGreaterThan(0)
   })
@@ -254,6 +258,9 @@ test.describe('CSV Rules Critical @tier1', () => {
 
     await page.getByRole('button', { name: /undo/i }).click()
 
+    // Wait for the third rule to appear after undo state update
+    await expect(importRulesPage.list.locator('[data-testid^="import-rule-row-"]').nth(2)).toBeVisible()
+
     expect(await importRulesPage.getRuleCount()).toBe(3)
   })
 
@@ -272,7 +279,20 @@ test.describe('CSV Rules Critical @tier1', () => {
     const entertainmentRow = page.locator('[data-testid^="category-row-"]')
       .filter({ hasText: 'Entertainment' })
     await entertainmentRow.getByRole('button', { name: /delete/i }).click()
-    await page.getByRole('button', { name: /confirm/i }).click()
+    // BpConfirmDialog renders the confirm button with confirmLabel="Delete"
+    await page.getByRole('button', { name: /^delete$/i }).click()
+
+    // Wait for the Entertainment category to disappear from budget view.
+    // The category row disappears when db.budgets.update() completes.
+    // db.csvCategoryMap.delete() runs immediately after in handleDeleteCategory.
+    await expect(entertainmentRow).not.toBeVisible({ timeout: 5000 })
+
+    // Wait for cascade delete of csvCategoryMap to complete by polling DB
+    await page.waitForFunction(async () => {
+      // @ts-ignore
+      const { db } = await import('/src/lib/db.ts')
+      return (await db.csvCategoryMap.count()) === 0
+    }, { timeout: 5000 })
 
     await importRulesPage.goto()
 

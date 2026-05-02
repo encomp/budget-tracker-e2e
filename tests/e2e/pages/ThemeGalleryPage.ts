@@ -32,6 +32,8 @@ export class ThemeGalleryPage {
   }
 
   async goto(): Promise<void> {
+    // Wait for the app to finish its onboarding check (returns null during async DB read)
+    await this.page.getByTestId('nav-settings').waitFor({ state: 'visible', timeout: 15000 })
     await this.page.getByTestId('nav-settings').click()
     await this.gallery.waitFor({ state: 'visible' })
   }
@@ -85,8 +87,11 @@ export class ThemeGalleryPage {
   async getInstalledThemeCount(): Promise<number> {
     const visible = await this.installedSection.isVisible()
     if (!visible) return 0
+    // Count only the remove buttons (one per installed theme) to avoid counting
+    // nested sub-elements (theme-card-active-*, theme-card-apply-*, theme-card-remove-*)
+    // that share the same "theme-card-" prefix as the card root element.
     return this.installedSection
-      .locator('[data-testid^="theme-card-"]')
+      .locator('[data-testid^="theme-card-remove-"]')
       .count()
   }
 }

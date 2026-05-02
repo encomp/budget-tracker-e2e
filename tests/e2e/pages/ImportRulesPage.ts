@@ -35,6 +35,8 @@ export class ImportRulesPage {
     await this.page.getByTestId('nav-settings').click()
     await this.page.getByText('Import Rules').click()
     await this.view.waitFor({ state: 'visible' })
+    // Wait for useLiveQuery (Dexie) to resolve — view shows data-loading="true" while querying
+    await this.page.waitForSelector('[data-testid="import-rules-view"]:not([data-loading])', { timeout: 5000 })
   }
 
   async getRuleCount(): Promise<number> {

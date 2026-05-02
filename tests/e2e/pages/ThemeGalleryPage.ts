@@ -9,6 +9,7 @@ export class ThemeGalleryPage {
   readonly previewPanel: Locator
   readonly saveAndApplyButton: Locator
   readonly saveToLibraryButton: Locator
+  readonly cancelButton: Locator
   readonly previewFontLabel: Locator
   readonly reducedMotionBanner: Locator
   readonly tryFocusButton: Locator
@@ -23,6 +24,7 @@ export class ThemeGalleryPage {
     this.previewPanel = page.getByTestId('theme-preview-panel')
     this.saveAndApplyButton = page.getByTestId('theme-save-and-apply-button')
     this.saveToLibraryButton = page.getByTestId('theme-save-to-library-button')
+    this.cancelButton = page.getByTestId('theme-preview-cancel')
     this.previewFontLabel = page.getByTestId('theme-preview-font-label')
     this.reducedMotionBanner = page.getByTestId('reduced-motion-banner')
     this.tryFocusButton = page.getByTestId('reduced-motion-try-focus')

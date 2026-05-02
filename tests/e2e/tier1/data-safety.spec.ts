@@ -27,7 +27,11 @@ test.describe('Data Safety @tier1', () => {
 
     await page.getByTestId('nav-settings').click()
     await page.getByTestId('danger-clear-data').click()
-    await page.getByRole('button', { name: /delete everything/i }).click()
+    // Clear triggers window.location.reload() — wait for that navigation to settle
+    await Promise.all([
+      page.waitForEvent('framenavigated'),
+      page.getByRole('button', { name: /delete everything/i }).click(),
+    ])
     await page.waitForLoadState('networkidle')
 
     const countAfterClear = await page.evaluate(async () => {

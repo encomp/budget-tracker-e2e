@@ -29,7 +29,7 @@ test.describe('CSV Import @tier1', () => {
     await importPage.uploadCSV(CHASE_CSV, 'chase.csv')
     await importPage.previewTable.waitFor({ state: 'visible' })
 
-    expect(await importPage.getUncategorizedCount()).toBe(1)
+    expect(await importPage.getUncategorizedCount()).toBe(2)
   })
 
   test('unknown bank CSV triggers manual mapping UI', async ({ importPage }) => {

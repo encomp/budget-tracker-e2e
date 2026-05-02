@@ -9,16 +9,30 @@ export class ImportPage {
   readonly previewTable: Locator
   readonly importButton: Locator
   readonly confirmMappingButton: Locator
+  readonly ruleCountSummary: Locator
+  readonly conflictPanel: Locator
+  readonly reviewConflictsButton: Locator
+  readonly importWithoutRulesButton: Locator
+  readonly startOverButton: Locator
+  readonly bankAmexToast: Locator
+  readonly bankCitiToast: Locator
 
   constructor(page: Page) {
-    this.page                 = page
-    this.stepper              = page.getByTestId('import-stepper')
-    this.dropzone             = page.getByTestId('import-dropzone')
-    this.fileInput            = page.getByTestId('import-file-input').first()
-    this.bankDetectedToast    = page.getByTestId('toast-bank-detected')
-    this.previewTable         = page.getByTestId('import-preview-table')
-    this.importButton         = page.getByTestId('import-confirm-button')
-    this.confirmMappingButton = page.getByTestId('import-confirm-mapping')
+    this.page                  = page
+    this.stepper               = page.getByTestId('import-stepper')
+    this.dropzone              = page.getByTestId('import-dropzone')
+    this.fileInput             = page.getByTestId('import-file-input').first()
+    this.bankDetectedToast     = page.getByTestId('toast-bank-detected')
+    this.previewTable          = page.getByTestId('import-preview-table')
+    this.importButton          = page.getByTestId('import-confirm-button')
+    this.confirmMappingButton  = page.getByTestId('import-confirm-mapping')
+    this.ruleCountSummary      = page.getByTestId('import-rule-count-summary')
+    this.conflictPanel         = page.getByTestId('import-conflict-panel')
+    this.reviewConflictsButton = page.getByTestId('import-conflict-review')
+    this.importWithoutRulesButton = page.getByTestId('import-without-rules')
+    this.startOverButton       = page.getByTestId('import-start-over')
+    this.bankAmexToast         = page.getByTestId('toast-bank-amex')
+    this.bankCitiToast         = page.getByTestId('toast-bank-citi')
   }
 
   async goto(): Promise<void> {
@@ -55,5 +69,31 @@ export class ImportPage {
       .nth(rowIndex)
     await row.getByRole('combobox').click()
     await this.page.getByRole('option', { name: categoryName }).click()
+  }
+
+  async getRuleCountSummaryText(): Promise<string | null> {
+    return this.ruleCountSummary.textContent()
+  }
+
+  async hasConflict(): Promise<boolean> {
+    return this.conflictPanel.isVisible()
+  }
+
+  async toggleRuleForRow(rowIndex: number, checked: boolean): Promise<void> {
+    const toggle = this.page.getByTestId(`import-rule-toggle-${rowIndex}`)
+    const current = await toggle.isChecked()
+    if (current !== checked) await toggle.click()
+  }
+
+  async getRuleKeyForRow(rowIndex: number): Promise<string | null> {
+    return this.page
+      .getByTestId(`import-rule-key-${rowIndex}`)
+      .inputValue()
+  }
+
+  async setRuleKeyForRow(rowIndex: number, key: string): Promise<void> {
+    const input = this.page.getByTestId(`import-rule-key-${rowIndex}`)
+    await input.fill(key)
+    await input.press('Tab')
   }
 }

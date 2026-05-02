@@ -233,3 +233,45 @@ export async function seedSetting(
     { key, value }
   )
 }
+
+interface SeedImportRule {
+  keyword: string
+  categoryName: string
+}
+
+export async function seedImportRules(
+  page: Page,
+  rules: SeedImportRule[]
+): Promise<void> {
+  await page.evaluate(async (rules) => {
+    // @ts-ignore — browser-context dynamic import resolved at runtime by Vite
+    const { db } = await import('/src/lib/db.ts')
+    const budgets = await db.budgets.toArray()
+    const allCategories = budgets.flatMap(
+      (b: { categories?: Array<{ id: string; name: string }> }) =>
+        b.categories ?? []
+    )
+
+    for (const rule of rules) {
+      const cat = allCategories.find(
+        (c: { name: string }) =>
+          c.name.toLowerCase() === rule.categoryName.toLowerCase()
+      )
+      if (!cat) continue
+
+      try {
+        await (db as any).importRules?.put({
+          id: crypto.randomUUID(),
+          keyword: rule.keyword.toLowerCase().trim(),
+          categoryId: cat.id,
+          createdAt: new Date().toISOString().slice(0, 10),
+        })
+      } catch {
+        await db.csvCategoryMap.put({
+          normalizedDescription: rule.keyword.toLowerCase().trim(),
+          categoryId: cat.id,
+        })
+      }
+    }
+  }, rules)
+}

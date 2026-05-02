@@ -14,7 +14,7 @@ export class ImportPage {
     this.page                 = page
     this.stepper              = page.getByTestId('import-stepper')
     this.dropzone             = page.getByTestId('import-dropzone')
-    this.fileInput            = page.getByTestId('import-file-input')
+    this.fileInput            = page.getByTestId('import-file-input').first()
     this.bankDetectedToast    = page.getByTestId('toast-bank-detected')
     this.previewTable         = page.getByTestId('import-preview-table')
     this.importButton         = page.getByTestId('import-confirm-button')

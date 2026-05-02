@@ -84,8 +84,9 @@ test.describe('HeatmapCalendar keyboard navigation @tier2', () => {
     const grid = page.getByTestId('heatmap-calendar')
     await grid.waitFor({ state: 'visible' })
 
-    // Tab into the grid — the roving-tabIndex cell (tabIndex=0) receives focus
-    await grid.press('Tab')
+    // Focus the roving-tabIndex cell directly (tabIndex=0 marks which cell is active)
+    const focusableCell = grid.locator('[tabindex="0"]').first()
+    await focusableCell.focus()
 
     // Capture current focused cell aria-label
     const initialLabel = await page.evaluate(() => {
@@ -114,8 +115,9 @@ test.describe('HeatmapCalendar keyboard navigation @tier2', () => {
     const grid = page.getByTestId('heatmap-calendar')
     await grid.waitFor({ state: 'visible' })
 
-    // Tab into grid, move to some other day, then press Home
-    await grid.press('Tab')
+    // Focus the roving-tabIndex cell, move to another day, then press Home
+    const focusableCell = grid.locator('[tabindex="0"]').first()
+    await focusableCell.focus()
     await page.keyboard.press('ArrowRight')
     await page.keyboard.press('ArrowRight')
     await page.keyboard.press('Home')

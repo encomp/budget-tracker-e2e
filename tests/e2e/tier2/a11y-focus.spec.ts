@@ -106,9 +106,9 @@ test.describe('Accessibility Focus & ARIA @tier2', () => {
 
     const heatmap = page.getByTestId('heatmap-calendar')
 
-    // Verify grid role exists
-    const grid = heatmap.getByRole('grid')
-    await expect(grid).toBeVisible()
+    // The heatmap container itself carries role="grid"
+    await expect(heatmap).toBeVisible()
+    await expect(heatmap).toHaveAttribute('role', 'grid')
 
     // Verify row children exist
     const rows = heatmap.getByRole('row')

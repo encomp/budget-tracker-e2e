@@ -65,7 +65,11 @@ test.describe('Data Safety @tier1', () => {
     await fileChooser.setFiles(exportPath)
 
     await page.getByTestId('restore-confirm-modal').waitFor()
-    await page.getByRole('button', { name: /restore/i }).click()
+    // Restore triggers window.location.reload() after 1200ms — wait for that navigation
+    await Promise.all([
+      page.waitForEvent('framenavigated'),
+      page.getByRole('button', { name: /restore/i }).click(),
+    ])
     await page.waitForLoadState('networkidle')
 
     const countAfterRestore = await page.evaluate(async () => {

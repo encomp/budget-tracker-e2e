@@ -84,7 +84,8 @@ test.describe('CSV Import @tier1', () => {
     await importPage.previewTable.waitFor()
     await importPage.importButton.click()
 
-    await page.getByTestId('transactions-table').waitFor()
+    // Wait for at least one badge (works on both mobile card view and desktop table)
+    await page.getByTestId('badge-source').first().waitFor()
     const badges = page.getByTestId('badge-source')
     const count = await badges.count()
     expect(count).toBeGreaterThan(0)

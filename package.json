@@ -1,0 +1,22 @@
+{
+  "name": "budget-tracker-e2e",
+  "version": "1.0.0",
+  "description": "Playwright E2E tests for BudgetPilot",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:tier1": "playwright test --grep @tier1",
+    "test:tier2": "playwright test --grep @tier2 --project=chromium-tier2",
+    "test:chromium": "playwright test --project=chromium",
+    "test:report": "playwright show-report",
+    "serve:dist": "npx serve dist -l 4173"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "date-fns": "^3.6.0",
+    "tsx": "^4.11.0",
+    "typescript": "^5.4.0"
+  }
+}

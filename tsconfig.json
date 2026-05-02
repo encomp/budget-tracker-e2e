@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@helpers/*": ["tests/e2e/helpers/*"],
+      "@pages/*": ["tests/e2e/pages/*"],
+      "@fixtures": ["tests/e2e/fixtures.ts"]
+    }
+  },
+  "include": ["tests/**/*.ts"],
+  "exclude": ["node_modules"]
+}

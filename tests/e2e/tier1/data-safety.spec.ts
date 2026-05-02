@@ -27,7 +27,7 @@ test.describe('Data Safety @tier1', () => {
 
     await page.getByTestId('nav-settings').click()
     await page.getByTestId('danger-clear-data').click()
-    await page.getByRole('button', { name: /confirm/i }).click()
+    await page.getByRole('button', { name: /delete everything/i }).click()
     await page.waitForLoadState('networkidle')
 
     const countAfterClear = await page.evaluate(async () => {
@@ -49,7 +49,7 @@ test.describe('Data Safety @tier1', () => {
       exportPath
     )
     await page.getByTestId('restore-confirm-modal').waitFor()
-    await page.getByRole('button', { name: /confirm/i }).click()
+    await page.getByRole('button', { name: /restore/i }).click()
     await page.waitForLoadState('networkidle')
 
     const countAfterRestore = await page.evaluate(async () => {

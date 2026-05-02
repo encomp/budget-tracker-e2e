@@ -35,6 +35,7 @@ test.describe('Onboarding @tier1', () => {
     await page.getByTestId('onboarding-income').fill('5000')
     await page.getByTestId('onboarding-next').click()
     await page.getByTestId('onboarding-finish').click()
+    await expect(page.getByTestId('onboarding-modal')).not.toBeVisible()
 
     await page.reload({ waitUntil: 'networkidle' })
     await expect(page.getByTestId('onboarding-modal')).not.toBeVisible()

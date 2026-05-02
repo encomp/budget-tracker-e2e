@@ -1,0 +1,95 @@
+# BudgetPilot E2E — GitLab CI
+# Clones the public app repo, runs Vite dev server, then runs Playwright tests.
+
+stages:
+  - setup
+  - tier1
+  - tier2
+
+image: mcr.microsoft.com/playwright:v1.44.0-jammy
+
+default:
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
+
+install:
+  stage: setup
+  script:
+    - npm ci
+    - git clone https://github.com/encomp/budget-tracker.git app
+    - cd app/budgetpilot && npm ci
+  artifacts:
+    paths:
+      - node_modules/
+      - app/
+    expire_in: 1 hour
+
+.tier1-base:
+  stage: tier1
+  needs: [install]
+  before_script:
+    - cd app/budgetpilot && npm run dev &
+    - npx wait-on http://localhost:5173 --timeout 30000
+  script:
+    - npx playwright test --project=$BROWSER tests/e2e/tier1/
+  after_script:
+    - mv playwright-report playwright-report-$BROWSER || true
+  artifacts:
+    when: always
+    paths:
+      - playwright-report-$BROWSER/
+    expire_in: 7 days
+  variables:
+    CI: "true"
+    BASE_URL: http://localhost:5173
+
+tier1-chromium:
+  extends: .tier1-base
+  variables:
+    BROWSER: chromium
+
+tier1-firefox:
+  extends: .tier1-base
+  variables:
+    BROWSER: firefox
+
+tier1-webkit:
+  extends: .tier1-base
+  variables:
+    BROWSER: webkit
+
+tier1-mobile-chrome:
+  extends: .tier1-base
+  variables:
+    BROWSER: mobile-chrome
+
+tier1-mobile-safari:
+  extends: .tier1-base
+  variables:
+    BROWSER: mobile-safari
+
+tier2:
+  stage: tier2
+  needs:
+    - tier1-chromium
+    - tier1-firefox
+    - tier1-webkit
+    - tier1-mobile-chrome
+    - tier1-mobile-safari
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  before_script:
+    - cd app/budgetpilot && npm run dev &
+    - npx wait-on http://localhost:5173 --timeout 30000
+  script:
+    - npx playwright test --project=chromium-tier2 tests/e2e/tier2/
+  artifacts:
+    when: always
+    paths:
+      - playwright-report/
+    expire_in: 7 days
+  variables:
+    CI: "true"
+    BASE_URL: http://localhost:5173

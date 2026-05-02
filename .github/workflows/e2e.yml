@@ -1,0 +1,180 @@
+name: E2E Tests
+
+on:
+  # Triggered by app repo after a successful push to main
+  repository_dispatch:
+    types: [app-build-complete]
+
+  # Manual trigger for debugging
+  workflow_dispatch:
+
+  # Also run on pushes to main in this repo (e.g. test updates)
+  push:
+    branches: [main]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # ── Tier 1: All 5 browser/device projects ──────────────────────────────────
+  tier1:
+    name: Tier 1 — ${{ matrix.project }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - chromium
+          - firefox
+          - webkit
+          - mobile-chrome
+          - mobile-safari
+
+    steps:
+      - name: Checkout E2E repo
+        uses: actions/checkout@v4
+
+      - name: Checkout app repo (public)
+        uses: actions/checkout@v4
+        with:
+          repository: encomp/budget-tracker
+          path: app
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install E2E dependencies
+        run: npm ci
+
+      - name: Install app dependencies
+        run: npm ci
+        working-directory: app/budgetpilot
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: pw-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-${{ matrix.project }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browser
+        run: |
+          BROWSER=${{ matrix.project }}
+          case $BROWSER in
+            mobile-safari) BROWSER=webkit ;;
+            mobile-chrome) BROWSER=chromium ;;
+          esac
+          if [ "${{ steps.pw-cache.outputs.cache-hit }}" != "true" ]; then
+            npx playwright install --with-deps $BROWSER
+          else
+            npx playwright install-deps $BROWSER
+          fi
+
+      - name: Start Vite dev server
+        run: npm run dev &
+        working-directory: app/budgetpilot
+        env:
+          CI: true
+
+      - name: Wait for dev server
+        run: npx wait-on http://localhost:5173 --timeout 30000
+
+      - name: Run Tier 1 tests — ${{ matrix.project }}
+        run: npx playwright test --project=${{ matrix.project }} tests/e2e/tier1/
+        env:
+          CI: true
+          BASE_URL: http://localhost:5173
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pw-report-tier1-${{ matrix.project }}-${{ github.run_id }}
+          path: playwright-report/
+          retention-days: 14
+
+  # ── Tier 2: Chromium only — runs after all Tier 1 pass ─────────────────────
+  tier2:
+    name: Tier 2 — Chromium
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: tier1
+
+    steps:
+      - name: Checkout E2E repo
+        uses: actions/checkout@v4
+
+      - name: Checkout app repo (public)
+        uses: actions/checkout@v4
+        with:
+          repository: encomp/budget-tracker
+          path: app
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install E2E dependencies
+        run: npm ci
+
+      - name: Install app dependencies
+        run: npm ci
+        working-directory: app/budgetpilot
+
+      - name: Cache Playwright Chromium
+        uses: actions/cache@v4
+        id: pw-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-chromium-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright Chromium
+        run: |
+          if [ "${{ steps.pw-cache.outputs.cache-hit }}" != "true" ]; then
+            npx playwright install --with-deps chromium
+          else
+            npx playwright install-deps chromium
+          fi
+
+      - name: Start Vite dev server
+        run: npm run dev &
+        working-directory: app/budgetpilot
+        env:
+          CI: true
+
+      - name: Wait for dev server
+        run: npx wait-on http://localhost:5173 --timeout 30000
+
+      - name: Run Tier 2 tests
+        run: npx playwright test --project=chromium-tier2 tests/e2e/tier2/
+        env:
+          CI: true
+          BASE_URL: http://localhost:5173
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pw-report-tier2-${{ github.run_id }}
+          path: playwright-report/
+          retention-days: 14
+
+  # ── Single status check for branch protection ───────────────────────────────
+  e2e-complete:
+    name: E2E Complete
+    runs-on: ubuntu-latest
+    needs: tier1
+    if: always()
+    steps:
+      - name: Check results
+        run: |
+          if [ "${{ needs.tier1.result }}" != "success" ]; then
+            echo "Tier 1 E2E tests failed"
+            exit 1
+          fi
+          echo "All Tier 1 E2E tests passed across all browsers"

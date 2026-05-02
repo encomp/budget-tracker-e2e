@@ -11,13 +11,16 @@
     "test:tier2": "playwright test --grep @tier2 --project=chromium-tier2",
     "test:chromium": "playwright test --project=chromium",
     "test:report": "playwright show-report",
-    "serve:dist": "npx serve dist -l 4173"
+    "serve:dist": "serve dist -l 5173",
+    "wait:server": "wait-on http://localhost:5173 --timeout 30000"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.0",
     "@types/node": "^25.6.0",
     "date-fns": "^3.6.0",
+    "serve": "^14.2.6",
     "tsx": "^4.11.0",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "wait-on": "^9.0.5"
   }
 }

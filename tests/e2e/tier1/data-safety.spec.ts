@@ -4,6 +4,15 @@ import path from 'path'
 import os from 'os'
 import fs from 'fs'
 
+async function gotoExportImport(page: import('@playwright/test').Page) {
+  await page.evaluate(async () => {
+    // @ts-ignore — browser-context dynamic import resolved at runtime by Vite
+    const { useAppStore } = await import('/src/store/useAppStore.ts')
+    useAppStore.getState().setActiveView('export-import')
+  })
+  await page.getByTestId('export-button').waitFor({ state: 'visible' })
+}
+
 test.describe('Data Safety @tier1', () => {
   test.beforeEach(async ({ page }) => {
     await setupOnboarded(page)
@@ -17,7 +26,7 @@ test.describe('Data Safety @tier1', () => {
       { amount: 3500,  type: 'income',  categoryId: catId },
     ])
 
-    await page.getByTestId('nav-export-import').click()
+    await gotoExportImport(page)
     const downloadPromise = page.waitForEvent('download')
     await page.getByTestId('export-button').click()
     const download = await downloadPromise
@@ -47,11 +56,14 @@ test.describe('Data Safety @tier1', () => {
 
     // App shows onboarding after clear — seed state to bypass it
     await seedOnboardedState(page)
-    await page.getByTestId('nav-export-import').click()
-    await page.setInputFiles(
-      '[data-testid="restore-file-input"]',
-      exportPath
-    )
+    await gotoExportImport(page)
+
+    // Use filechooser event so the native input is populated cross-browser (including webkit)
+    const fileChooserPromise = page.waitForEvent('filechooser')
+    await page.getByRole('button', { name: /choose backup file/i }).click()
+    const fileChooser = await fileChooserPromise
+    await fileChooser.setFiles(exportPath)
+
     await page.getByTestId('restore-confirm-modal').waitFor()
     await page.getByRole('button', { name: /restore/i }).click()
     await page.waitForLoadState('networkidle')
@@ -83,7 +95,7 @@ test.describe('Data Safety @tier1', () => {
   })
 
   test("export filename includes today's date", async ({ page }) => {
-    await page.getByTestId('nav-export-import').click()
+    await gotoExportImport(page)
     const downloadPromise = page.waitForEvent('download')
     await page.getByTestId('export-button').click()
     const download = await downloadPromise

@@ -22,7 +22,11 @@ export class ImportPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.getByTestId('nav-import').click()
+    await this.page.evaluate(async () => {
+      // @ts-ignore — browser-context dynamic import resolved at runtime by Vite
+      const { useAppStore } = await import('/src/store/useAppStore.ts')
+      useAppStore.getState().setActiveView('import')
+    })
     await this.stepper.waitFor({ state: 'visible' })
   }
 

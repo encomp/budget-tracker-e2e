@@ -40,13 +40,33 @@ export const ROSE_THEME = {
     '--bp-motion-intensity': '1',
     '--bp-sidebar-width-full': '240px',
     '--bp-sidebar-width-rail': '64px',
+    '--bp-icon-size-sm': '16px',
+    '--bp-icon-size-md': '20px',
+    '--bp-icon-size-lg': '24px',
+    '--bp-icon-stroke': '1.5',
+  },
+}
+
+export const FOREST_THEME_WITH_ICONS = {
+  id: 'test-forest',
+  name: 'Test Forest',
+  description: 'Test theme with icon overrides',
+  version: '1.0',
+  icons: {
+    'nav-dashboard': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>',
+  },
+  tokens: {
+    ...ROSE_THEME.tokens,
+    '--bp-accent': '#22c55e',
+    '--bp-accent-muted': 'rgba(34,197,94,0.12)',
+    '--bp-accent-glow': 'rgba(34,197,94,0.25)',
   },
 }
 
 export const INVALID_THEME = {
   id: 'invalid',
   name: 'Invalid Theme',
-  description: 'Missing required tokens',
+  description: 'Missing required tokens — intentionally omits: --bp-bg-surface, --bp-text-primary, --bp-border, --bp-positive, --bp-danger, and all icon tokens',
   version: '1.0',
   tokens: {
     '--bp-bg-base': '#000000',

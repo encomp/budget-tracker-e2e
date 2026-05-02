@@ -16,7 +16,7 @@ test.describe('Theme Engine @tier1', () => {
     })
 
     await expect(page.getByTestId('theme-preview-panel')).toBeVisible()
-    await page.getByTestId('theme-apply-button').click()
+    await page.getByTestId('theme-save-and-apply-button').click()
 
     const accent = await page.evaluate(() =>
       getComputedStyle(document.documentElement)
@@ -59,7 +59,8 @@ test.describe('Theme Engine @tier1', () => {
       mimeType: 'application/json',
       buffer: Buffer.from(JSON.stringify(ROSE_THEME)),
     })
-    await page.getByTestId('theme-apply-button').click()
+    await expect(page.getByTestId('theme-preview-panel')).toBeVisible()
+    await page.getByTestId('theme-save-and-apply-button').click()
     await page.reload({ waitUntil: 'networkidle' })
 
     const accent = await page.evaluate(() =>
@@ -76,9 +77,10 @@ test.describe('Theme Engine @tier1', () => {
       mimeType: 'application/json',
       buffer: Buffer.from(JSON.stringify(ROSE_THEME)),
     })
-    await page.getByTestId('theme-apply-button').click()
+    await expect(page.getByTestId('theme-preview-panel')).toBeVisible()
+    await page.getByTestId('theme-save-and-apply-button').click()
 
-    await page.getByTestId('theme-reset-button').click()
+    await page.getByTestId('theme-card-apply-midnight').click()
 
     const accent = await page.evaluate(() =>
       getComputedStyle(document.documentElement)

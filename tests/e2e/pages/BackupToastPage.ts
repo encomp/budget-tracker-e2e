@@ -9,10 +9,10 @@ export class BackupToastPage {
 
   constructor(page: Page) {
     this.page = page
-    this.toast = page.getByTestId('toast-container')
-    this.toastMessage = page.getByTestId('toast-message')
-    this.toastActionButton = page.locator('[data-testid="toast-container"] button').first()
-    this.toastDismissButton = page.locator('[data-testid="toast-container"] button[aria-label="Dismiss"]')
+    this.toast = page.getByTestId('global-toast-container')
+    this.toastMessage = page.locator('[data-testid="global-toast-container"] [data-testid="toast-message"]')
+    this.toastActionButton = page.locator('[data-testid="global-toast-container"] button').first()
+    this.toastDismissButton = page.locator('[data-testid="global-toast-container"] button[aria-label="Dismiss"]')
   }
 
   async waitForToast(): Promise<void> {

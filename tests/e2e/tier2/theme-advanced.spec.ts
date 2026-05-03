@@ -57,7 +57,7 @@ test.describe('Theme Advanced @tier2', () => {
     await themeGallery.uploadTheme(INVALID_THEME, 'invalid.json')
 
     await expect(page.getByTestId('toast-container')).toBeVisible()
-    await expect(page.getByTestId('toast-message')).toContainText('Invalid')
+    await expect(page.getByTestId('toast-container').getByTestId('toast-message')).toContainText('Invalid')
     await expect(themeGallery.previewPanel).not.toBeVisible()
   })
 

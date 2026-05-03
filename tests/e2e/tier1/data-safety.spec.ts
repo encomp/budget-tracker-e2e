@@ -104,7 +104,7 @@ test.describe('Data Safety @tier1', () => {
     await page.getByTestId('export-button').click()
     const download = await downloadPromise
 
-    const today = new Date().toISOString().slice(0, 10)
+    const today = new Date().toLocaleDateString('sv-SE') // 'sv-SE' yields YYYY-MM-DD in local time
     expect(download.suggestedFilename()).toContain(today)
     expect(download.suggestedFilename()).toContain('budgetpilot-backup')
   })

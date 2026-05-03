@@ -254,7 +254,7 @@ test.describe('CSV Rules Critical @tier1', () => {
 
     const toast = page.getByTestId('toast-container')
     await expect(toast).toBeVisible()
-    await expect(page.getByTestId('toast-message')).toContainText('Deleted')
+    await expect(page.getByTestId('toast-container').getByTestId('toast-message')).toContainText('Deleted')
 
     await page.getByRole('button', { name: /undo/i }).click()
 

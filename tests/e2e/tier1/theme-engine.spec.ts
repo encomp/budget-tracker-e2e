@@ -42,7 +42,7 @@ test.describe('Theme Engine @tier1', () => {
     })
 
     await expect(page.getByTestId('toast-container')).toBeVisible()
-    await expect(page.getByTestId('toast-message')).toContainText('Invalid theme')
+    await expect(page.getByTestId('toast-container').getByTestId('toast-message')).toContainText('Invalid theme')
     await expect(page.getByTestId('theme-preview-panel')).not.toBeVisible()
 
     const accentAfter = await page.evaluate(() =>

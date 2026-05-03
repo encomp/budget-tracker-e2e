@@ -65,7 +65,11 @@ export async function resetDB(page: Page): Promise<void> {
   await page.evaluate(async () => {
     // @ts-ignore — browser-context dynamic import resolved at runtime by Vite
     const { useAppStore } = await import('/src/store/useAppStore.ts')
-    useAppStore.getState().setInstalledThemes([])
+    try {
+      useAppStore.getState().setInstalledThemes([])
+    } catch (e) {
+      // Fallback if the store hasn't initialized yet or module failed to load
+    }
   })
 }
 

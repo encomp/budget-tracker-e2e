@@ -18,8 +18,8 @@ test.describe('Backup Reminder @tier2', () => {
 
     await page.reload({ waitUntil: 'networkidle' })
 
-    await expect(page.getByTestId('toast-container')).toBeVisible()
-    await expect(page.getByTestId('toast-message')).toContainText('backup')
+    await expect(page.getByTestId('global-toast-container')).toBeVisible()
+    await expect(page.getByTestId('global-toast-container').getByTestId('toast-message')).toContainText('backup')
   })
 
   test('no reminder when last export was recent', async ({ page }) => {
@@ -28,7 +28,7 @@ test.describe('Backup Reminder @tier2', () => {
     await page.reload({ waitUntil: 'networkidle' })
 
     await page.waitForTimeout(1500)
-    await expect(page.getByTestId('toast-container')).not.toBeVisible()
+    await expect(page.getByTestId('global-toast-container')).not.toBeVisible()
   })
 
   test('no reminder when user has never exported but appOpenCount <= 3', async ({ page }) => {
@@ -36,6 +36,6 @@ test.describe('Backup Reminder @tier2', () => {
     await seedSetting(page, 'fsaSetupShown', false)
     await page.reload({ waitUntil: 'networkidle' })
     await page.waitForTimeout(1500)
-    await expect(page.getByTestId('toast-container')).not.toBeVisible()
+    await expect(page.getByTestId('global-toast-container')).not.toBeVisible()
   })
 })

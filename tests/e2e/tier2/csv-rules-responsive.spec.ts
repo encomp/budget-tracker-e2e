@@ -10,10 +10,7 @@ test.describe('CSV Rules Responsive @tier2', () => {
     page,
     importRulesPage,
   }) => {
-    test.skip(
-      ((await page.viewportSize())?.width ?? 0) < 900,
-      'Desktop test only'
-    )
+    await page.setViewportSize({ width: 1280, height: 800 })
     await importRulesPage.goto()
     await importRulesPage.addRule('netflix', 'Entertainment')
 

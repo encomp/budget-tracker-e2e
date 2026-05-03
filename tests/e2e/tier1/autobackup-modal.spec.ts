@@ -24,14 +24,14 @@ test.describe('AutoBackup modal — day 3 trigger', () => {
     expect(await modal.isVisible()).toBe(false)
   })
 
-  test('modal shows correct CTA for current browser', async ({ page, browserName }) => {
+  test('modal shows correct CTA for current browser', async ({ page, browserName, isMobile }) => {
     await page.goto('/')
     await seedOpenCount3(page)
     await page.reload()
     const modal = new AutoBackupModalPage(page)
     await modal.waitForModal()
     const btnText = await modal.getPrimaryButtonText()
-    if (browserName === 'chromium') {
+    if (browserName === 'chromium' && !isMobile) {
       expect(btnText).toContain('Folder')
     } else {
       expect(btnText).toContain('Export')

@@ -105,7 +105,7 @@ test.describe('CSV Rules Critical @tier1', () => {
     const uncatRow = importPage.previewTable
       .getByTestId('badge-uncategorized')
       .first()
-    await uncatRow.locator('..').getByRole('combobox').click()
+    await uncatRow.locator('../..').getByRole('combobox').click()
 
     await expect(page.getByRole('option', { name: 'Groceries' })).toBeVisible()
     await expect(page.getByRole('option', { name: 'Dining Out' })).toBeVisible()

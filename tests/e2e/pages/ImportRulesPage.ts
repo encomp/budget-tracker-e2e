@@ -85,6 +85,8 @@ export class ImportRulesPage {
   async selectRuleByIndex(index: number): Promise<void> {
     const rows = this.list.locator('[data-testid^="import-rule-row-"]')
     const checkbox = rows.nth(index).locator('input[type="checkbox"]')
-    await checkbox.check({ force: true })
+    // click() instead of check() — React controlled inputs need the full click sequence.
+    // force:true bypasses clip-path visibility for the hidden mobile checkbox.
+    await checkbox.click({ force: true })
   }
 }

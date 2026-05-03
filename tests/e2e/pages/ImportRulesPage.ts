@@ -87,7 +87,10 @@ export class ImportRulesPage {
     const row = rows.nth(index)
     const checkbox = row.locator('input[type="checkbox"]')
 
-    if (await checkbox.isVisible()) {
+    const viewport = this.page.viewportSize()
+    const isMobile = viewport !== null && viewport.width < 768
+
+    if (!isMobile) {
       // Desktop: checkbox always visible
       await checkbox.check()
     } else {

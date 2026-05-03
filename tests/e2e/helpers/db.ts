@@ -248,6 +248,43 @@ interface SeedImportRule {
   categoryName: string
 }
 
+export async function seedNoExport(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    // @ts-ignore
+    const { Settings } = await import('/src/lib/settings.ts')
+    await Settings.set('onboardingCompleted', true)
+    await Settings.set('appOpenCount', 4)
+    await Settings.set('fsaSetupShown', true)
+    // lastExport intentionally not set
+    // lastReminderShown intentionally not set
+  })
+}
+
+export async function seedLapsedExport(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    // @ts-ignore
+    const { Settings } = await import('/src/lib/settings.ts')
+    // @ts-ignore
+    const { subDays, formatISO } = await import('/src/lib/date-fns-shim.ts').catch(() => ({ subDays: null, formatISO: null }))
+    const tenDaysAgo = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+    await Settings.set('onboardingCompleted', true)
+    await Settings.set('appOpenCount', 10)
+    await Settings.set('fsaSetupShown', true)
+    await Settings.set('lastExport', tenDaysAgo)
+    // lastReminderShown intentionally not set
+  })
+}
+
+export async function seedOpenCount3(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    // @ts-ignore
+    const { Settings } = await import('/src/lib/settings.ts')
+    await Settings.set('onboardingCompleted', true)
+    await Settings.set('appOpenCount', 2) // app open increments to 3 on load
+    await Settings.set('fsaSetupShown', false)
+  })
+}
+
 export async function seedImportRules(
   page: Page,
   rules: SeedImportRule[]

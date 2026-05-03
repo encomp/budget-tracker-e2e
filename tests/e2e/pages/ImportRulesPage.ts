@@ -84,9 +84,24 @@ export class ImportRulesPage {
 
   async selectRuleByIndex(index: number): Promise<void> {
     const rows = this.list.locator('[data-testid^="import-rule-row-"]')
-    const checkbox = rows.nth(index).locator('input[type="checkbox"]')
-    // click() instead of check() — React controlled inputs need the full click sequence.
-    // force:true bypasses clip-path visibility for the hidden mobile checkbox.
-    await checkbox.click({ force: true })
+    const row = rows.nth(index)
+    const checkbox = row.locator('input[type="checkbox"]')
+
+    if (await checkbox.isVisible()) {
+      // Desktop: checkbox always visible
+      await checkbox.check()
+    } else {
+      // Mobile: checkbox hidden via clip-path until long-press enters selection mode.
+      // Simulate a 600ms hold on the card (threshold is 500ms in the app).
+      const rowBox = await row.boundingBox()
+      if (!rowBox) throw new Error(`Row ${index} has no bounding box`)
+      await this.page.mouse.move(rowBox.x + 20, rowBox.y + rowBox.height / 2)
+      await this.page.mouse.down()
+      await this.page.waitForTimeout(600)
+      await this.page.mouse.up()
+      // Long-press sets selectionMode=true which removes clip-path — checkbox is now visible
+      await checkbox.waitFor({ state: 'visible', timeout: 3000 })
+      await checkbox.check()
+    }
   }
 }

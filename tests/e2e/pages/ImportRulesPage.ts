@@ -85,7 +85,6 @@ export class ImportRulesPage {
   async selectRuleByIndex(index: number): Promise<void> {
     const rows = this.list.locator('[data-testid^="import-rule-row-"]')
     const checkbox = rows.nth(index).locator('input[type="checkbox"]')
-    // force:true needed on mobile where checkbox is hidden until long-press enters selection mode
-    await checkbox.check({ force: true })
+    await checkbox.check()
   }
 }

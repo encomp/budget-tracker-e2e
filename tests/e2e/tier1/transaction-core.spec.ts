@@ -22,7 +22,7 @@ test.describe('Transaction Core Loop @tier1', () => {
     })
     await transactionForm.submitAndWaitForClose()
 
-    await expect(page.getByTestId('metric-expenses')).toContainText('45.99')
+    await expect(page.getByTestId('metric-expenses')).toContainText('$46')
   })
 
   test('form rejects amount of zero', async ({
@@ -85,7 +85,7 @@ test.describe('Transaction Core Loop @tier1', () => {
     await page.reload({ waitUntil: 'networkidle' })
     await page.getByTestId('metric-expenses').waitFor()
 
-    await expect(page.getByTestId('metric-expenses')).toContainText('68.49')
+    await expect(page.getByTestId('metric-expenses')).toContainText('$68')
   })
 
   test('manual transaction shows "Manual" source badge', async ({

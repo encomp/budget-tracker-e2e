@@ -106,6 +106,6 @@ test.describe('Data Safety @tier1', () => {
 
     const today = new Date().toLocaleDateString('sv-SE') // 'sv-SE' yields YYYY-MM-DD in local time
     expect(download.suggestedFilename()).toContain(today)
-    expect(download.suggestedFilename()).toContain('budgetpilot-backup')
+    expect(download.suggestedFilename()).toContain('plainfold-budget-backup')
   })
 })

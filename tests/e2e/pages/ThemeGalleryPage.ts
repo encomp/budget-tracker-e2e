@@ -34,6 +34,12 @@ export class ThemeGalleryPage {
   async goto(): Promise<void> {
     // Wait for the app to finish its onboarding check (returns null during async DB read)
     await this.page.getByTestId('nav-settings').waitFor({ state: 'visible', timeout: 15000 })
+    // Dismiss any modal backdrop (e.g. AutoBackupModal) that could intercept pointer events
+    const backdrop = this.page.locator('[aria-hidden="true"][data-state="open"]')
+    if (await backdrop.isVisible()) {
+      await this.page.keyboard.press('Escape')
+      await backdrop.waitFor({ state: 'hidden', timeout: 3000 }).catch(() => {})
+    }
     await this.page.getByTestId('nav-settings').click()
     await this.gallery.waitFor({ state: 'visible' })
   }

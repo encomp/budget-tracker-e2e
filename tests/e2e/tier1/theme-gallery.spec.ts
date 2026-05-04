@@ -32,7 +32,7 @@ test.describe('Theme Gallery @tier1', () => {
     expect(await themeGallery.isThemeActive('midnight')).toBe(false)
 
     // Persists across reload
-    await page.reload({ waitUntil: 'domcontentloaded' })
+    await page.reload({ waitUntil: 'networkidle' })
     await page.getByTestId('nav-settings').click()
     await themeGallery.gallery.waitFor()
     expect(await themeGallery.isThemeActive('focus')).toBe(true)
@@ -51,7 +51,7 @@ test.describe('Theme Gallery @tier1', () => {
     expect(await themeGallery.getInstalledThemeCount()).toBe(1)
 
     // Persists across reload
-    await page.reload({ waitUntil: 'domcontentloaded' })
+    await page.reload({ waitUntil: 'networkidle' })
     await themeGallery.goto()
     await expect(themeGallery.installedSection).toBeVisible()
     expect(await themeGallery.getInstalledThemeCount()).toBe(1)
@@ -69,7 +69,7 @@ test.describe('Theme Gallery @tier1', () => {
     expect(await themeGallery.getCurrentAccent()).toBe('#f472b6')
 
     // Persists across reload
-    await page.reload({ waitUntil: 'domcontentloaded' })
+    await page.reload({ waitUntil: 'networkidle' })
     expect(await themeGallery.getCurrentAccent()).toBe('#f472b6')
   })
 
@@ -119,7 +119,7 @@ test.describe('Theme Gallery @tier1', () => {
     await expect(themeGallery.reducedMotionBanner).toBeVisible()
     await themeGallery.dismissBannerButton.click()
 
-    await page.reload({ waitUntil: 'domcontentloaded' })
+    await page.reload({ waitUntil: 'networkidle' })
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await themeGallery.goto()
     await expect(themeGallery.reducedMotionBanner).not.toBeVisible()

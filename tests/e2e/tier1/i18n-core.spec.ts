@@ -1,4 +1,5 @@
 import { test, expect, setupOnboarded } from '../fixtures'
+import { clickNavItem } from '../helpers/nav'
 
 test.describe('i18n Core @tier1', () => {
   test.beforeEach(async ({ page }) => {
@@ -11,7 +12,7 @@ test.describe('i18n Core @tier1', () => {
     dashboardPage,
   }) => {
     // Navigate to Settings and change language
-    await page.getByTestId('nav-settings').click()
+    await clickNavItem(page, 'nav-settings')
     await page.getByTestId('settings-language-select').click()
     await page.getByRole('option', { name: /español/i }).click()
 
@@ -36,7 +37,7 @@ test.describe('i18n Core @tier1', () => {
     dashboardPage,
   }) => {
     // Navigate to Settings and change language to French
-    await page.getByTestId('nav-settings').click()
+    await clickNavItem(page, 'nav-settings')
     await page.getByTestId('settings-language-select').click()
     await page.getByRole('option', { name: /français/i }).click()
 
@@ -60,7 +61,7 @@ test.describe('i18n Core @tier1', () => {
     page,
   }) => {
     // Switch to Spanish
-    await page.getByTestId('nav-settings').click()
+    await clickNavItem(page, 'nav-settings')
     await page.getByTestId('settings-language-select').click()
     await page.getByRole('option', { name: /español/i }).click()
 
@@ -84,7 +85,7 @@ test.describe('i18n Core @tier1', () => {
     dashboardPage,
   }) => {
     // Switch to French locale which has € as the currency symbol in the locale file
-    await page.getByTestId('nav-settings').click()
+    await clickNavItem(page, 'nav-settings')
 
     // Set currency to € via the profile form
     await page.getByTestId('settings-profile-currency').fill('€')
@@ -120,7 +121,7 @@ test.describe('i18n Core @tier1', () => {
     dashboardPage,
   }) => {
     // Switch to Spanish
-    await page.getByTestId('nav-settings').click()
+    await clickNavItem(page, 'nav-settings')
     await page.getByTestId('settings-language-select').click()
     await page.getByRole('option', { name: /español/i }).click()
 

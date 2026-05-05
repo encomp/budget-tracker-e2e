@@ -1,4 +1,5 @@
 import { type Page, type Locator } from '@playwright/test'
+import { clickNavItem } from '../helpers/nav'
 
 export class FsaStatusPage {
   readonly page: Page
@@ -16,8 +17,11 @@ export class FsaStatusPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.getByTestId('nav-export-import').waitFor({ state: 'visible', timeout: 10000 })
-    await this.page.getByTestId('nav-export-import').click()
+    const viewport = this.page.viewportSize()
+    const isMobile = viewport !== null && viewport.width < 768
+    const waitTestId = isMobile ? 'nav-more' : 'nav-export-import'
+    await this.page.getByTestId(waitTestId).waitFor({ state: 'visible', timeout: 10000 })
+    await clickNavItem(this.page, 'nav-export-import')
     await this.page.waitForSelector(
       '[data-testid="fsa-status-panel"], [data-testid="last-export-date"]',
       { timeout: 5000 }

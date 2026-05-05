@@ -110,7 +110,7 @@ test.describe('Theme Advanced @tier2', () => {
   test('transaction rows show ThemeIcon beside category name', async ({
     page,
   }) => {
-    await page.getByTestId('fab-add-transaction').click()
+    await page.getByTestId('add-transaction-fab').click()
     await page.getByTestId('transaction-modal').waitFor({ state: 'visible' })
     await page.getByTestId('txn-amount').fill('25')
     await page.getByTestId('txn-type-expense').click()

@@ -1,4 +1,5 @@
 import { type Page, type Locator } from '@playwright/test'
+import { clickNavItem } from '../helpers/nav'
 
 export class ImportRulesPage {
   readonly page: Page
@@ -32,7 +33,7 @@ export class ImportRulesPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.getByTestId('nav-settings').click()
+    await clickNavItem(this.page, 'nav-settings')
     await this.page.getByText('Import Rules').click()
     await this.view.waitFor({ state: 'visible' })
     // Wait for useLiveQuery (Dexie) to resolve — view shows data-loading="true" while querying

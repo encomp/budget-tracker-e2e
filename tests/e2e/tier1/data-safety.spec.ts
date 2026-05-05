@@ -1,5 +1,6 @@
 import { test, expect, CURRENT_MONTH, setupOnboarded } from '../fixtures'
 import { seedTransactions, getCategoryId, seedOnboardedState } from '../helpers/db'
+import { clickNavItem } from '../helpers/nav'
 import path from 'path'
 import os from 'os'
 import fs from 'fs'
@@ -34,7 +35,7 @@ test.describe('Data Safety @tier1', () => {
     await download.saveAs(exportPath)
     expect(fs.existsSync(exportPath)).toBe(true)
 
-    await page.getByTestId('nav-settings').click()
+    await clickNavItem(page, 'nav-settings')
     await page.getByTestId('danger-clear-data').click()
     // Clear triggers window.location.reload() — wait for that navigation to settle
     await Promise.all([

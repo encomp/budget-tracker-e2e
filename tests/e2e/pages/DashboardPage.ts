@@ -21,7 +21,7 @@ export class DashboardPage {
     this.savingsRateCard   = page.getByTestId('metric-savings-rate')
     this.heatmapGrid       = page.getByTestId('heatmap-calendar')
     this.recentTransactions = page.getByTestId('recent-transactions')
-    this.addButton         = page.getByTestId('fab-add-transaction')
+    this.addButton         = page.getByTestId('add-transaction-fab')
     this.monthDisplay      = page.getByTestId('month-display')
     this.prevMonthButton   = page.getByTestId('month-nav-prev')
     this.nextMonthButton   = page.getByTestId('month-nav-next')

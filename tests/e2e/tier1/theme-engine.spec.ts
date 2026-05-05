@@ -1,10 +1,11 @@
 import { test, expect, setupOnboarded } from '../fixtures'
 import { ROSE_THEME, INVALID_THEME } from '../fixtures/themes'
+import { clickNavItem } from '../helpers/nav'
 
 test.describe('Theme Engine @tier1', () => {
   test.beforeEach(async ({ page }) => {
     await setupOnboarded(page)
-    await page.getByTestId('nav-settings').click()
+    await clickNavItem(page, 'nav-settings')
     await page.waitForLoadState('networkidle')
   })
 

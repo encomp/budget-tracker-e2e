@@ -1,4 +1,5 @@
 import { test, expect, setupOnboarded } from '../fixtures'
+import { clickNavItem } from '../helpers/nav'
 
 test.use({ viewport: { width: 390, height: 844 } })
 
@@ -23,7 +24,7 @@ test.describe('Mobile Responsive @tier2', () => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
-    const fab    = page.getByTestId('fab-add-transaction')
+    const fab    = page.getByTestId('add-transaction-fab')
     const tabBar = page.getByTestId('bottom-tab-bar')
 
     const fabBox    = await fab.boundingBox()
@@ -38,22 +39,25 @@ test.describe('Mobile Responsive @tier2', () => {
   test('all 4 bottom tabs navigate correctly', async ({ page }) => {
     await page.goto('/')
 
-    const tabs: Array<{ testId: string; landingTestId: string }> = [
+    // Primary tabs (directly in bottom bar)
+    const primaryTabs: Array<{ testId: string; landingTestId: string }> = [
       { testId: 'nav-transactions', landingTestId: 'transactions-table' },
       { testId: 'nav-budget',       landingTestId: 'budget-income-input' },
-      { testId: 'nav-settings',     landingTestId: 'settings-profile-name' },
       { testId: 'nav-dashboard',    landingTestId: 'metric-income' },
     ]
-
-    for (const tab of tabs) {
+    for (const tab of primaryTabs) {
       await page.getByTestId(tab.testId).click()
       await expect(page.getByTestId(tab.landingTestId)).toBeVisible()
     }
+
+    // Settings is now inside the More sheet on mobile
+    await clickNavItem(page, 'nav-settings')
+    await expect(page.getByTestId('settings-profile-name')).toBeVisible()
   })
 
   test('transaction entry opens as bottom sheet on mobile', async ({ page }) => {
     await page.goto('/')
-    await page.getByTestId('fab-add-transaction').click()
+    await page.getByTestId('add-transaction-fab').click()
 
     const modal = page.getByTestId('transaction-modal')
     await modal.waitFor({ state: 'visible' })
